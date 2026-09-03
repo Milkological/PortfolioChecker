@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest tests/test_market_data.py -k \"annual_dividend\" -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -k \"annual_dividend\" -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -k \"dividend_history\" -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -k \"wiring or converts_to_base_currency\" -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_simulation.py -k \"test_compute_dividend_cash_multi_ticker\" -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_simulation.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_contributions.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_report_builder.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_cli.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_dashboard_app.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_report_builder.py -k total_annual_dividend_income -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -c \"import portfolio_checker.dashboard_app\")",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -k \"describe_high_growth\" -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_cli_parsing.py -k test_parse_lookback_period_valid_options -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_cli_parsing.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -k fetch_growth_rate_for_period -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -c \"import portfolio_checker.dashboard_app; print\\('import ok'\\)\")",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_dividend_history.py -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_report_builder.py -k \"portfolio_value or portfolio_share\" -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_report_builder.py -k dividend_history -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -c \"import portfolio_checker.dashboard_app; print\\('ok'\\)\")",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_dashboard_app.py -k toggle -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -c ' *)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_dashboard_app.py -k view_value_after_toggle -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_report_builder.py -k weighted_average -q)",
+      "Bash(rm -f table_smoke.txt)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_dashboard_app.py -k row_style -q)",
+      "Bash(rm -f row_smoke2.txt)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -k company_summary -q)",
+      "Bash(./portfolio_venv/Scripts/python.exe -m pytest tests/test_market_data.py -k wiring -q)",
+      "Bash(rm -f final_smoke.txt)"
+    ]
+  }
+}
