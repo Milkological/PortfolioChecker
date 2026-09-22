@@ -1,2 +1,7 @@
 holdings.csv
+cpf.csv
+config.ini
 logs/
+__pycache__/
+.pytest_cache/
+portfolio_venv/

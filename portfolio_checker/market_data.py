@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import pandas as pd
 import yfinance as yf
@@ -72,8 +72,67 @@ def fetch_growth_rate_for_period(symbol: str, period: str) -> float:
     return compute_cagr(start_close, end_close, years)
 
 
-def fetch_company_summary(ticker_obj) -> str:
-    info = ticker_obj.info
+def _strip_timezone(series):
+    index = series.index
+    if getattr(index, "tz", None) is not None:
+        series = series.copy()
+        series.index = index.tz_localize(None)
+    return series
+
+
+def fetch_price_series(ticker_obj, period: str = "5y") -> list:
+    """Closing prices as (date, close) pairs, for correlation and drawdown work.
+
+    The CAGR path already downloads this history and throws all but the first
+    and last close away; keeping the series costs no extra network calls.
+    """
+    history = ticker_obj.history(period=period, auto_adjust=False)
+    if history.empty:
+        return []
+    history = history.dropna(subset=["Close"])
+    if history.empty:
+        return []
+    closes = _strip_timezone(history["Close"])
+    return [(timestamp.date(), float(close)) for timestamp, close in closes.items()]
+
+
+def fetch_etf_holdings(ticker_obj) -> list:
+    """Constituent symbols of a fund, when yfinance can supply them.
+
+    This data is patchy and the accessor has changed shape across yfinance
+    versions, so every failure returns an empty list — the review falls back to
+    same-exchange inference and labels the finding as inferred.
+    """
+    try:
+        top_holdings = ticker_obj.funds_data.top_holdings
+    except Exception:
+        return []
+
+    if top_holdings is None or getattr(top_holdings, "empty", True):
+        return []
+
+    try:
+        return [str(symbol).upper() for symbol in top_holdings.index]
+    except Exception:
+        return []
+
+
+def fetch_company_metadata(ticker_obj, info=None) -> dict:
+    """Classification fields used by the portfolio review. Never raises."""
+    if info is None:
+        info = getattr(ticker_obj, "info", None) or {}
+    return {
+        "sector": info.get("sector"),
+        "industry": info.get("industry"),
+        "country": info.get("country"),
+        "quote_type": info.get("quoteType"),
+        "market_cap": info.get("marketCap"),
+    }
+
+
+def fetch_company_summary(ticker_obj, info=None) -> str:
+    if info is None:
+        info = ticker_obj.info
     summary = info.get("longBusinessSummary")
     if summary:
         return summary
@@ -135,6 +194,13 @@ class TickerMarketData:
     has_dividends: bool
     dividend_history: list
     company_summary: str
+    sector: str = None
+    industry: str = None
+    country: str = None
+    quote_type: str = None
+    market_cap: float = None
+    native_currency: str = None
+    price_series: list = field(default_factory=list)
 
 
 def build_ticker_market_data(
@@ -149,7 +215,10 @@ def build_ticker_market_data(
     annual_growth_rate = compute_cagr(start_close, end_close, years)
     annual_dividend = fetch_annual_dividend_per_share(ticker_obj, dividend_lookback_years)
     dividend_history = fetch_dividend_history(ticker_obj)
-    company_summary = fetch_company_summary(ticker_obj)
+
+    info = getattr(ticker_obj, "info", None) or {}
+    company_summary = fetch_company_summary(ticker_obj, info)
+    metadata = fetch_company_metadata(ticker_obj, info)
 
     native_currency = native_currency_override or get_ticker_currency(ticker_obj)
     fx_rate = get_fx_rate(native_currency, base_currency)
@@ -161,4 +230,7 @@ def build_ticker_market_data(
         company_summary=company_summary,
         has_dividends=has_dividends(ticker_obj),
         dividend_history=[(payment_date, amount * fx_rate) for payment_date, amount in dividend_history],
+        native_currency=native_currency,
+        price_series=fetch_price_series(ticker_obj, period=price_period),
+        **metadata,
     )

@@ -1,4 +1,11 @@
 yfinance
+pandas
 matplotlib
-pytest
+plotly
 dash
+pytest
+
+# Optional: only needed for the LLM-written narrative in the portfolio review.
+# Install whichever provider you use; without either, the review runs rule-based.
+anthropic      # for [claude]
+google-genai   # for [gemini]
