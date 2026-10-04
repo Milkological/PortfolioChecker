@@ -3,5 +3,6 @@ cpf.csv
 config.ini
 logs/
 __pycache__/
+*.pyc
 .pytest_cache/
 portfolio_venv/
